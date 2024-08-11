@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       title: 'News App',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        primarySwatch: Colors.orange,
+        primarySwatch: Colors.blue,
       ),
       home: NewsHomePage(),
     );
@@ -207,7 +207,7 @@ class _NewsHomePageState extends State<NewsHomePage> {
             label: 'Saved',
           ),
         ],
-        selectedItemColor: Colors.orange,
+        selectedItemColor: Colors.blue,
         unselectedItemColor: Colors.grey,
         onTap: (index) {
           // Handle navigation
