@@ -1,31 +1,33 @@
 import 'package:flutter/material.dart';
-import './news_home_page_content.dart';
-import './trending_page.dart';
+import './pages/news_home_page.dart';
+import './pages/trending_page.dart';
 
-class NewsHomePage extends StatefulWidget {
+class AppScreen extends StatefulWidget {
+  const AppScreen({super.key});
+
   @override
-  _NewsHomePageState createState() => _NewsHomePageState();
+  _AppScreenState createState() => _AppScreenState();
 }
 
-class _NewsHomePageState extends State<NewsHomePage> {
+class _AppScreenState extends State<AppScreen> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    NewsHomePageContent(),
-    TrendingPage(),
-    Center(child: Text('Saved Page')), // Placeholder for Saved page
+    const NewsHomePage(),
+    const TrendingPage(),
+    const Center(child: Text('Saved Page')), // Placeholder for Saved page
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('NewsApp'),
+        title: const Text('NewsApp'),
       ),
       body: _pages[_currentIndex],  // Display the current page
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,  // Highlight the current tab
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: 'Home',

@@ -1,10 +1,20 @@
+
 import 'package:flutter/material.dart';
-import './articles.dart';
+import '../articles.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ArticleDetailPage extends StatelessWidget {
   final Article article;
 
-  ArticleDetailPage({required this.article});
+  Future<void> _launchURL(Uri url) async {
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url);
+    } else {
+      print("$url could not be launched.");
+    }
+  }
+
+  const ArticleDetailPage({super.key, required this.article});
 
   @override
   Widget build(BuildContext context) {
@@ -23,30 +33,37 @@ class ArticleDetailPage extends StatelessWidget {
                 width: double.infinity,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Icon(Icons.broken_image, size: 100);
+                  return const Icon(Icons.broken_image, size: 100);
                 },
               ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               article.title,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               article.publishedAt,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.grey,
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             Text(
-              article.content,
-              style: TextStyle(
+              article.description,
+              style: const TextStyle(
                 fontSize: 16,
               ),
+            ),
+            const SizedBox(height: 20),
+            TextButton(
+                onPressed: (){
+                  _launchURL(Uri.parse(article.url));
+                },
+                child: const Text("Click here for more information."),
             ),
           ],
         ),
