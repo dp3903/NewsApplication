@@ -5,7 +5,8 @@ import '../articles.dart';
 import '../my_widgets.dart';
 
 class NewsHomePage extends StatefulWidget {
-  const NewsHomePage({super.key});
+  String? searchQuery;
+  NewsHomePage({super.key, this.searchQuery});
 
   @override
   _NewsHomePageState createState() => _NewsHomePageState();
@@ -21,11 +22,12 @@ class _NewsHomePageState extends State<NewsHomePage> {
     super.initState();
     fetchNews();
     fetchHeadlines();
+    print(widget.searchQuery);
   }
 
   Future<void> fetchHeadlines() async {
     final response = await http.get(Uri.parse(
-        'https://newsapi.org/v2/top-headlines?country=in&apiKey=7bbc1087994c470ea8b19414459fa050'));
+        'https://newsapi.org/v2/top-headlines?country=us&apiKey=7bbc1087994c470ea8b19414459fa050'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -33,6 +35,7 @@ class _NewsHomePageState extends State<NewsHomePage> {
 
       setState(() {
         _headlines = articlesJson.map((json) => Article.fromJson(json)).toList();
+        _headlines.removeWhere((article) => (article.title == '[Removed]'));
         _isLoading = false;
       });
     } else {
@@ -44,8 +47,9 @@ class _NewsHomePageState extends State<NewsHomePage> {
   }
 
   Future<void> fetchNews() async {
+    print('https://newsapi.org/v2/everything?${widget.searchQuery==""?"q=news&":(widget.searchQuery!+"&")}sortBy=popularity&apiKey=7bbc1087994c470ea8b19414459fa050');
     final response = await http.get(Uri.parse(
-        'https://newsapi.org/v2/everything?q=Apple&from=2024-08-01&sortBy=popularity&apiKey=7bbc1087994c470ea8b19414459fa050'));
+        'https://newsapi.org/v2/everything?${widget.searchQuery==""?"q=news&":(widget.searchQuery!+"&")}sortBy=popularity&apiKey=7bbc1087994c470ea8b19414459fa050'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -53,6 +57,7 @@ class _NewsHomePageState extends State<NewsHomePage> {
 
       setState(() {
         _articles = articlesJson.map((json) => Article.fromJson(json)).toList();
+        _articles.removeWhere((article) => article.title == '[Removed]');
         _isLoading = false;
       });
     } else {
