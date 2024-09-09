@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart'; // new
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
+import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart'; // new
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class CustomSignInScreen extends StatelessWidget {
   const CustomSignInScreen({
@@ -19,6 +20,7 @@ class CustomSignInScreen extends StatelessWidget {
       showPasswordVisibilityToggle: true,
       providers: [
         EmailAuthProvider(),
+        GoogleProvider(clientId: dotenv.env["WEB_CLIENT_SECRET"] ?? "KEY_NOT_FOUND")
       ],
       headerBuilder: (context, constraints, shrinkOffset) {
         return Padding(
