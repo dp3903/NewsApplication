@@ -20,53 +20,6 @@ class _PreferencesPageState extends State<PreferencesPage> {
     preferences = Map.from(widget.preferences);
   }
 
-  // List of keywords/topics
-  // final List<String> keywords = [
-  //   'Finance',
-  //   'Life',
-  //   'Politics',
-  //   'Technology',
-  //   'Sports',
-  //   'BlockChain',
-  //   'BitCoin',
-  //   'Entertainment',
-  //   'Etherium',
-  //   'Stocks',
-  //   'StockMarket',
-  //   'Health',
-  //   'Criminal',
-  //   'Science',
-  //   'Exams',
-  //   'Students',
-  //   'Games',
-  // ];
-  //
-  // // Map to keep track of selected keywords
-  // Map<String, bool> selectedKeywords = {};
-  //
-  // void handleConfirm(){
-  //   String query = "";
-  //   selectedKeywords.forEach((key,val)=>{
-  //     if(val){
-  //       query += (key+"+")
-  //     }
-  //   });
-  //   if(query!=""){
-  //     query = "q="+query;
-  //     query = query.substring(0,query.length-1);
-  //   }
-  //   print(query);
-  // }
-  //
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   // Initialize selectedKeywords with all values set to false
-  //   for (String keyword in keywords) {
-  //     selectedKeywords[keyword] = false;
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -144,7 +97,8 @@ class _PreferencesPageState extends State<PreferencesPage> {
                 ),
                 side: BorderSide(color: Colors.blue[400]!, width: 2.0), // Border around the button
               ),
-            )
+            ),
+            Text("(Go back to home page after pressing confirm to see your chages.)")
           ],
         ),
       ),

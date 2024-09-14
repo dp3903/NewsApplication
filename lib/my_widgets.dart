@@ -60,40 +60,58 @@ class HeadLine_Card extends StatelessWidget {
         );
       },
       child: Container(
-        width: 300,
+        width: 300, // Fixed width for the Card
         margin: const EdgeInsets.only(right: 16),
-        child: Card(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Image.network(
-                article.urlToImage,
-                width: double.infinity,
-                height: 120,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Center(
-                    child: HugeIcon(
-                      icon: HugeIcons.strokeRoundedAlbumNotFound01,
-                      color: Colors.red,
-                      size: 30.0,
-                    ),
-                  );
-                },
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: 200, // Ensure the Card has a max height of 200
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  article.title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+              child: Card(
+                child: SingleChildScrollView(
+                  physics: constraints.maxHeight < 200
+                      ? NeverScrollableScrollPhysics() // Disable scrolling if content fits
+                      : AlwaysScrollableScrollPhysics(), // Enable scrolling if content overflows
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        height: 120, // Fixed height for image or error icon
+                        child: Image.network(
+                          article.urlToImage,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return const Center(
+                              child: Icon(
+                                Icons.error,
+                                color: Colors.red,
+                                size: 30.0,
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          article.title,
+                          maxLines: 2, // Optional: Limit title lines to 2
+                          overflow: TextOverflow.ellipsis, // Handle long text with ellipsis
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
