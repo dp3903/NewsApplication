@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../articles.dart';
 import '../my_widgets.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 class NewsHomePage extends StatefulWidget {
   String? searchQuery;
@@ -79,7 +80,7 @@ class _NewsHomePageState extends State<NewsHomePage> {
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   const Text(
                     'Breaking News',
@@ -89,23 +90,43 @@ class _NewsHomePageState extends State<NewsHomePage> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  SizedBox(
-                    height: 200,
-                    child: _headlines.length!=0
-                        ? ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _headlines.length,
-                            itemBuilder: (context, index) {
-                              final article = _headlines[index];
-                              return HeadLine_Card(article: article);
-                            },
-                          )
-                        : Center(
-                            child: Text(
+                  // SizedBox(
+                  //   height: 200,
+                  //   child: _headlines.length!=0
+                  //       ? ListView.builder(
+                  //           scrollDirection: Axis.horizontal,
+                  //           itemCount: _headlines.length,
+                  //           itemBuilder: (context, index) {
+                  //             final article = _headlines[index];
+                  //             return HeadLine_Card(article: article);
+                  //           },
+                  //         )
+                  //       : Center(
+                  //           child: Text(
+                  //             "No Headlines found for your location or your preferences."
+                  //           ),
+                  //         ),
+                  // ),
+                  _headlines.length!=0
+                      ? ConstrainedBox(
+                        constraints: BoxConstraints(maxHeight: 300),
+                        child: Center(
+                          child: CarouselSlider.builder(
+                              itemCount: _headlines.length,
+                              itemBuilder: (context, index, id) =>
+                                  HeadLine_Card(article: _headlines[index]),
+                              options: CarouselOptions(
+                                aspectRatio: 16 / 9,
+                                enableInfiniteScroll: false,
+                                enlargeCenterPage: true,
+                            )),
+                        ),
+                      )
+                      : Center(
+                          child: Text(
                               "No Headlines found for your location or your preferences."
-                            ),
                           ),
-                  ),
+                        ),
                   const SizedBox(height: 20),
                   const Text(
                     'Recent News',
@@ -116,14 +137,19 @@ class _NewsHomePageState extends State<NewsHomePage> {
                   ),
                   const SizedBox(height: 10),
                   _articles.length != 0
-                      ? ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _articles.length,
-                        itemBuilder: (context, index) {
-                          final article = _articles[index];
-                          return Article_Card(article: article);
-                        },
+                      ? ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: 800),
+                        child: Center(
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: _articles.length,
+                            itemBuilder: (context, index) {
+                              final article = _articles[index];
+                              return Article_Card(article: article);
+                            },
+                          ),
+                        ),
                       )
                       : Center(
                           child: Text(

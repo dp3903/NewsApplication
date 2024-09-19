@@ -43,18 +43,23 @@ class _TrendingPageState extends State<TrendingPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Trending News'),
-      ),
-      body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView.builder(
-        itemCount: _trendingArticles.length,
-        itemBuilder: (context, index) {
-          final article = _trendingArticles[index];
-          return Article_Card(article: article);
-        },
+    return Center(
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+        constraints: BoxConstraints(
+          maxWidth: 1000
+        ),
+        child: Scaffold(
+          body: _isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+            itemCount: _trendingArticles.length,
+            itemBuilder: (context, index) {
+              final article = _trendingArticles[index];
+              return Article_Card(article: article);
+            },
+          ),
+        ),
       ),
     );
   }

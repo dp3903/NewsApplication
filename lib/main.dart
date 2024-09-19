@@ -26,7 +26,16 @@ class MyApp extends StatelessWidget {
         title: 'News App',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          primarySwatch: Colors.orange,
+          primaryColor: Colors.white,
+          appBarTheme: AppBarTheme(
+            backgroundColor: Colors.black,
+            titleTextStyle: TextStyle(
+              color: Colors.white,
+            ),
+            iconTheme: IconThemeData(
+              color: Colors.white
+            ),
+          ),
         ),
         home: const AuthGate(),
     );

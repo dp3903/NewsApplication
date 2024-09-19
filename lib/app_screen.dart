@@ -136,7 +136,7 @@ class _AppScreenState extends State<AppScreen> {
         onChange: onChange,
         onConfirm: handleConfirm,
       ),
-      const CustomProfilePage(),
+      CustomProfilePage(),
     ];
 
     return Scaffold(
@@ -144,33 +144,42 @@ class _AppScreenState extends State<AppScreen> {
         title: const Text('NewsApp'),
       ),
       body: _pages[_currentIndex],  // Display the current page
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,  // Highlight the current tab
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.trending_up),
-            label: 'Trending',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.tune),
-            label: 'Preferences',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Saved',
-          ),
-        ],
-        selectedItemColor: Colors.orange,
-        unselectedItemColor: Colors.grey,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
+      bottomNavigationBar: Container(
+        margin: EdgeInsets.fromLTRB(12, 4, 12, 12),
+        decoration: BoxDecoration(
+          color: Colors.black,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: BottomNavigationBar(
+          currentIndex: _currentIndex,  // Highlight the current tab
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.trending_up),
+              label: 'Trending',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.tune),
+              label: 'Preferences',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: 'Profile',
+            ),
+          ],
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.black, // Set background color directly here
+          selectedItemColor: Colors.white,
+          unselectedItemColor: Colors.grey,
+          onTap: (index) {
+            setState(() {
+              _currentIndex = index;
+            });
+          },
+        ),
       ),
     );
   }

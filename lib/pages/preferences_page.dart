@@ -23,14 +23,7 @@ class _PreferencesPageState extends State<PreferencesPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Select Your Preference',
-        ),
-        shadowColor: Colors.black,
-        elevation: 10,
-        // backgroundColor: Colors.blue,
-      ),
+
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -49,7 +42,14 @@ class _PreferencesPageState extends State<PreferencesPage> {
               runSpacing: 6.0, // Gap between lines
               children: preferences.keys.map((keyword) {
                 return FilterChip(
-                  label: Text(keyword),
+                  label: Text(
+                      keyword,
+                      style: TextStyle(
+                        color: preferences[keyword]!
+                            ? Colors.white
+                            : Colors.black,
+                      ),
+                  ),
                   selected: preferences[keyword]!,
                   onSelected: (bool selected) {
                     setState(() {
@@ -64,14 +64,14 @@ class _PreferencesPageState extends State<PreferencesPage> {
                     ),
                   ),
                   backgroundColor: Colors.grey[200],
-                  selectedColor: Colors.blue[200],
+                  selectedColor: Colors.black,
                   showCheckmark: false, // Hide checkmark for a cleaner look
                   avatar: Icon(
                     preferences[keyword]!
                         ? Icons.check_circle
                         : Icons.add_circle,
                     color: preferences[keyword]!
-                        ? Colors.blue
+                        ? Colors.white
                         : Colors.grey,
                   ),
                 );
@@ -85,17 +85,16 @@ class _PreferencesPageState extends State<PreferencesPage> {
               child: Text(
                 "Confirm",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontSize: 20,
                 ),
               ),
               style: TextButton.styleFrom(
-                backgroundColor: Colors.blue[400], // Background color
+                backgroundColor: Colors.black, // Background color
                 padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0), // Padding
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                ),
-                side: BorderSide(color: Colors.blue[400]!, width: 2.0), // Border around the button
+                ),// Border around the button
               ),
             ),
             Text("(Go back to home page after pressing confirm to see your chages.)")
