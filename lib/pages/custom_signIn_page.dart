@@ -1,70 +1,7 @@
-// import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-// import 'package:flutter/material.dart';
-// import 'package:firebase_auth/firebase_auth.dart' hide EmailAuthProvider;
-// import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart'; // new
-// import 'package:flutter_dotenv/flutter_dotenv.dart';
-//
-// class CustomSignInScreen extends StatelessWidget {
-//   const CustomSignInScreen({
-//     super.key,
-//   });
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return SignInScreen(
-//       styles: {
-//         EmailFormStyle(
-//           signInButtonVariant: ButtonVariant.filled,
-//         ),
-//       },
-//       showPasswordVisibilityToggle: true,
-//       providers: [
-//         EmailAuthProvider(),
-//         GoogleProvider(clientId: dotenv.env["WEB_CLIENT_SECRET"] ?? "KEY_NOT_FOUND")
-//       ],
-//       headerBuilder: (context, constraints, shrinkOffset) {
-//         return Padding(
-//           padding: const EdgeInsets.all(20),
-//           child: AspectRatio(
-//             aspectRatio: 1,
-//             child: Image.asset('images/img.png'),
-//           ),
-//         );
-//       },
-//       subtitleBuilder: (context, action) {
-//         return Padding(
-//           padding: const EdgeInsets.symmetric(vertical: 8.0),
-//           child: action == AuthAction.signIn
-//               ? const Text('Welcome to Any-News, please sign in!')
-//               : const Text('Welcome to Any-News, please sign up!'),
-//         );
-//       },
-//       footerBuilder: (context, action) {
-//         return const Padding(
-//           padding: EdgeInsets.only(top: 16),
-//           child: Text(
-//             'By signing in, you agree to our terms and conditions.',
-//             style: TextStyle(color: Colors.grey),
-//           ),
-//         );
-//       },
-//       sideBuilder: (context, shrinkOffset) {
-//         return Padding(
-//           padding: const EdgeInsets.all(20),
-//           child: AspectRatio(
-//             aspectRatio: 1,
-//             child: Image.asset('images/img.png'),
-//           ),
-//         );
-//       },
-//     );
-//   }
-// }
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart'; // For Google sign-in
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 class CustomSignInScreen extends StatefulWidget {
   const CustomSignInScreen({Key? key}) : super(key: key);
@@ -77,6 +14,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
   bool _isLoading = false;
 
   // Function to sign in with email and password
@@ -102,9 +40,32 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
   // Function to sign in with Google
   Future<void> _signInWithGoogle() async {
     try {
-      final googleProvider = GoogleAuthProvider();
-      await _auth.signInWithPopup(googleProvider);  // For web-based sign-in
+      if (kIsWeb) {
+        // Web sign-in using signInWithPopup
+        GoogleAuthProvider googleProvider = GoogleAuthProvider();
+        await _auth.signInWithPopup(googleProvider);
+
+      } else {
+        // Mobile sign-in using GoogleSignIn and Firebase
+        final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+        if (googleUser == null) {
+          // User canceled the sign-in
+          return;
+        }
+
+        final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+        // Create a new credential for mobile
+        final AuthCredential credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth.accessToken,
+          idToken: googleAuth.idToken,
+        );
+
+        // Sign in to Firebase with the mobile credentials
+        await _auth.signInWithCredential(credential);
+      }
     } catch (e) {
+      print("Error during Google sign-in: $e");
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
     }
   }
@@ -127,7 +88,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                 child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                Image.asset('images/img.png', height: 150), // Custom header image
+                Image.asset('assets/images/img.png', height: 150), // Custom header image
                 const SizedBox(height: 20),
 
                 TextField(
@@ -183,7 +144,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                 ElevatedButton.icon(
                   onPressed: _signInWithGoogle,
                   icon: Image.asset(
-                    'images/google_icon.png', // Custom Google icon
+                    'assets/images/google_icon.png', // Custom Google icon
                     height: 24,
                   ),
                   label: const Text(
