@@ -2,50 +2,65 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'custom_signUp_page.dart';
+import 'custom_signIn_page.dart';
 
-class CustomSignInScreen extends StatefulWidget {
-  const CustomSignInScreen({Key? key}) : super(key: key);
+class CustomSignUpScreen extends StatefulWidget {
+  const CustomSignUpScreen({Key? key}) : super(key: key);
 
   @override
-  _CustomSignInScreenState createState() => _CustomSignInScreenState();
+  _CustomSignUpScreenState createState() => _CustomSignUpScreenState();
 }
 
-class _CustomSignInScreenState extends State<CustomSignInScreen> {
+class _CustomSignUpScreenState extends State<CustomSignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
   bool _isLoading = false;
 
-  // Function to sign in with email and password
-  Future<void> _signInWithEmail() async {
+  // Function to sign up with email and password
+  Future<void> _signUpWithEmail() async {
+    if (_passwordController.text != _confirmPasswordController.text) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Passwords don't match")),
+      );
+      return;
+    }
+
     setState(() {
       _isLoading = true;
     });
 
     try {
-      await _auth.signInWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      // await _auth.signInWithEmailAndPassword(
+      //   email: _emailController.text.trim(),
+      //   password: _passwordController.text.trim(),
+      // );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
+      return;
     } finally {
       setState(() {
         _isLoading = false;
       });
     }
+    Navigator.pop(context);
   }
 
-  // Function to sign in with Google
-  Future<void> _signInWithGoogle() async {
+  // Function to sign up with Google
+  Future<void> _signUpWithGoogle() async {
     try {
       if (kIsWeb) {
         // Web sign-in using signInWithPopup
         GoogleAuthProvider googleProvider = GoogleAuthProvider();
         await _auth.signInWithPopup(googleProvider);
-
       } else {
         // Mobile sign-in using GoogleSignIn and Firebase
         final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
@@ -66,8 +81,10 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
         await _auth.signInWithCredential(credential);
       }
     } catch (e) {
-      print("Error during Google sign-in: $e");
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error: ${e.toString()}')));
+      print("Error during Google sign-up: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: ${e.toString()}')),
+      );
     }
   }
 
@@ -75,7 +92,7 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign-In'),
+        title: const Text('Sign-Up'),
       ),
       body: Center(
         child: Padding(
@@ -83,12 +100,12 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : Container(
-                constraints: BoxConstraints(
-                  maxWidth: 700,
-                ),
-                child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
+            constraints: const BoxConstraints(
+              maxWidth: 700,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
                 Image.asset('assets/images/img.png', height: 150), // Custom header image
                 const SizedBox(height: 20),
 
@@ -96,13 +113,9 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                   controller: _emailController,
                   decoration: const InputDecoration(
                     labelText: 'Email',
-                    icon: Icon(
-                      Icons.email_outlined
-                    ),
+                    icon: Icon(Icons.email_outlined),
                     hintText: "example@abc.com",
-                    hintStyle: TextStyle(
-                      color: Colors.grey,
-                    ),
+                    hintStyle: TextStyle(color: Colors.grey),
                     border: OutlineInputBorder(),
                   ),
                 ),
@@ -112,84 +125,88 @@ class _CustomSignInScreenState extends State<CustomSignInScreen> {
                   controller: _passwordController,
                   decoration: const InputDecoration(
                     labelText: 'Password',
+                    icon: Icon(Icons.password_outlined),
                     border: OutlineInputBorder(),
-                    icon: Icon(
-                      Icons.password_outlined
-                    )
+                  ),
+                  obscureText: true,
+                ),
+                const SizedBox(height: 10),
+
+                TextField(
+                  controller: _confirmPasswordController,
+                  decoration: const InputDecoration(
+                    labelText: 'Confirm Password',
+                    icon: Icon(Icons.password_outlined),
+                    border: OutlineInputBorder(),
                   ),
                   obscureText: true,
                 ),
                 const SizedBox(height: 20),
 
                 TextButton(
-                  onPressed: _signInWithEmail,
-                  child: Text(
-                    "Sign-in",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
+                  onPressed: _signUpWithEmail,
+                  child: const Text(
+                    "Sign-up",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.black, // Background color
-                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0), // Padding
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 12.0,
+                    ), // Padding
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                    ),// Border around the button
+                    ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
 
-                // Google Sign-In Button
+                // Google Sign-Up Button
                 ElevatedButton.icon(
-                  onPressed: _signInWithGoogle,
+                  onPressed: _signUpWithGoogle,
                   icon: Image.asset(
                     'assets/images/google_icon.png', // Custom Google icon
                     height: 24,
                   ),
                   label: const Text(
-                      'Sign In with Google',
-                    style: TextStyle(
-                      color: Colors.white
-                    ),
+                    'Sign Up with Google',
+                    style: TextStyle(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // White background for Google button
+                    backgroundColor: Colors.black,
                   ),
                 ),
 
                 const SizedBox(height: 10),
 
-                const Text(
-                    "Don't have an account?"
-                ),
+                const Text("Already have an account?"),
                 TextButton(
-                  onPressed: (){
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const CustomSignUpScreen()),
-                    );
+                  onPressed: () {
+                    Navigator.pop(context);// Go back to the sign-in screen
                   },
-                  child: Text(
-                    "Register here",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
+                  child: const Text(
+                    "Sign in here",
+                    style: TextStyle(color: Colors.white, fontSize: 20),
                   ),
                   style: TextButton.styleFrom(
                     backgroundColor: Colors.black, // Background color
-                    padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0), // Padding
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24.0,
+                      vertical: 12.0,
+                    ), // Padding
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.0), // Rounded corners
-                    ),// Border around the button
+                    ),
                   ),
                 ),
 
                 const SizedBox(height: 20),
 
-                const Text('By signing in, you agree to our terms and conditions.', style: TextStyle(color: Colors.grey)),
+                const Text(
+                  'By signing up, you agree to our terms and conditions.',
+                  style: TextStyle(color: Colors.grey),
+                ),
               ],
             ),
           ),
