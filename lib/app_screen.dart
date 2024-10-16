@@ -62,6 +62,7 @@ class _AppScreenState extends State<AppScreen> {
 
     setState(() {
       keywordQuery=query;
+      _currentIndex=0;
     });
 
     // print(keywordQuery);
